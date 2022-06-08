@@ -1,2 +1,2 @@
-# pytorch-ps-spectral
+# pytorch-ps
 Pseudospectral utility methods adapted for use in the pytorch framework.
