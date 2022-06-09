@@ -1,7 +1,10 @@
 # pytorch-ps
 Pseudospectral utility methods adapted for use in the pytorch framework.
-To build simply invoke 'python3 setup.py build'
-To build and install for the current user invoke 'python3 setup.py install --user'
+To build change to the src directory and simply invoke 
+**python3 setup.py build**
+To build and install for the current user invoke '
+**python3 setup.py install --user**
+
 The following functions are implemented
 
 pyzwgj(np, alpha, beta) -Find the Gauss Jacobi Zero roots and Weights at np intervals given Jacobi polynomial parameters alpha and beta.  This will return a single tensor with the first dimension being the Zeroes and the second dimension containing the Weights.
