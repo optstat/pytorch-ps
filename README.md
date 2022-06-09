@@ -24,4 +24,4 @@ The following functions are implemented
 
 **pyDgrjp(np, alpha, beta)** Compute the Derivative Matrix associated with the Gauss-Radau-Jacobi zeros with a zero at z=1 at np intervals given Jacobi polynomial parameters alpha and beta.
 
-**pyDglj(np, alpha, beta)** Compute the Derivative Matrix with the Gauss-Lobatto-Jacobi zeros at np intervals given Jacobi polynomial parameters alpha and beta.
+**pyDgrjp(np, alpha, beta)** Compute the Derivative Matrix with the Gauss-Lobatto-Jacobi zeros at np intervals given Jacobi polynomial parameters alpha and beta.
