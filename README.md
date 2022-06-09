@@ -1,8 +1,11 @@
 # pytorch-ps
 Pseudospectral utility methods adapted for use in the pytorch framework.
 To build change to the src directory and simply invoke 
+
 **python3 setup.py build**
+
 To build and install for the current user invoke '
+
 **python3 setup.py install --user**
 
 The following functions are implemented
