@@ -5,15 +5,15 @@
 
 #include <boost/core/ignore_unused.hpp>
 
-static const double kNekUnsetDouble = -9999;
-static const double kNekMinResidInit = 1e16;
-static const double kVertexTheSameDouble  = 1.0e-8;
-static const double kGeomFactorsTol = 1.0e-8;
-static const double kNekZeroTol = 1.0e-12;
-static const double kGeomRightAngleTol = 1e-14;
-static const double kNekSqrtTol = 1.0e-16;
-static const double kNekIterativeTol = 1e-09;
-static const double kNekSparseNonZeroTol = 1e-16;
+static const NekDouble kNekUnsetDouble = -9999;
+static const NekDouble kNekMinResidInit = 1e16;
+static const NekDouble kVertexTheSameDouble  = 1.0e-8;
+static const NekDouble kGeomFactorsTol = 1.0e-8;
+static const NekDouble kNekZeroTol = 1.0e-12;
+static const NekDouble kGeomRightAngleTol = 1e-14;
+static const NekDouble kNekSqrtTol = 1.0e-16;
+static const NekDouble kNekIterativeTol = 1e-09;
+static const NekDouble kNekSparseNonZeroTol = 1e-16;
 /// Maximum number of iterations in polynomial defalation routine Jacobz
 #define STOP  30
 /// Precision tolerance for two points to be similar
@@ -22,163 +22,6 @@ static const double kNekSparseNonZeroTol = 1e-16;
 #define sign(a,b) ((b)<0 ? -fabs(a) : fabs(a))
 
 namespace Polylib {
-
-
-      /**
-    \brief Routine to calculate Jacobi polynomials, \f$
-    P^{\alpha,\beta}_n(z) \f$, and their first derivative, \f$
-    \frac{d}{dz} P^{\alpha,\beta}_n(z) \f$.
-
-    \li This function returns the vectors \a poly_in and \a poly_d
-    containing the value of the \f$ n^th \f$ order Jacobi polynomial
-    \f$ P^{\alpha,\beta}_n(z) \alpha > -1, \beta > -1 \f$ and its
-    derivative at the \a np points in \a z[i]
-
-    - If \a poly_in = NULL then only calculate derivatice
-
-    - If \a polyd   = NULL then only calculate polynomial
-
-    - To calculate the polynomial this routine uses the recursion
-    relationship (see appendix A ref [4]) :
-    \f$ \begin{array}{rcl}
-    P^{\alpha,\beta}_0(z) &=& 1 \\
-    P^{\alpha,\beta}_1(z) &=& \frac{1}{2} [ \alpha-\beta+(\alpha+\beta+2)z] \\
-    a^1_n P^{\alpha,\beta}_{n+1}(z) &=& (a^2_n + a^3_n z)
-    P^{\alpha,\beta}_n(z) - a^4_n P^{\alpha,\beta}_{n-1}(z) \\
-    a^1_n &=& 2(n+1)(n+\alpha + \beta + 1)(2n + \alpha + \beta) \\
-    a^2_n &=& (2n + \alpha + \beta + 1)(\alpha^2 - \beta^2)  \\
-    a^3_n &=& (2n + \alpha + \beta)(2n + \alpha + \beta + 1)
-    (2n + \alpha + \beta + 2)  \\
-    a^4_n &=& 2(n+\alpha)(n+\beta)(2n + \alpha + \beta + 2)
-    \end{array} \f$
-
-    - To calculate the derivative of the polynomial this routine uses
-    the relationship (see appendix A ref [4]) :
-    \f$ \begin{array}{rcl}
-    b^1_n(z)\frac{d}{dz} P^{\alpha,\beta}_n(z)&=&b^2_n(z)P^{\alpha,\beta}_n(z)
-    + b^3_n(z) P^{\alpha,\beta}_{n-1}(z) \hspace{2.2cm} \\
-    b^1_n(z) &=& (2n+\alpha + \beta)(1-z^2) \\
-    b^2_n(z) &=& n[\alpha - \beta - (2n+\alpha + \beta)z]\\
-    b^3_n(z) &=& 2(n+\alpha)(n+\beta)
-    \end{array} \f$
-
-    - Note the derivative from this routine is only valid for -1 < \a z < 1.
-    */
-    void jacobfd(const int np, const double *z, double *poly_in, double *polyd,
-        const int n, const double alpha, const double beta){
-            int i;
-            double  zero = 0.0, one = 1.0, two = 2.0;
-
-            if(!np)
-                return;
-
-            if(n == 0){
-                if(poly_in)
-                    for(i = 0; i < np; ++i)
-                        poly_in[i] = one;
-                if(polyd)
-                    for(i = 0; i < np; ++i)
-                        polyd[i] = zero;
-            }
-            else if (n == 1){
-                if(poly_in)
-                    for(i = 0; i < np; ++i)
-                        poly_in[i] = 0.5*(alpha - beta + (alpha + beta + two)*z[i]);
-                if(polyd)
-                    for(i = 0; i < np; ++i)
-                        polyd[i] = 0.5*(alpha + beta + two);
-            }
-            else{
-                int k;
-                double   a1,a2,a3,a4;
-                double   two = 2.0, apb = alpha + beta;
-                double   *poly, *polyn1,*polyn2;
-
-                if(poly_in){ // switch for case of no poynomial function return
-                    polyn1 = (double *)malloc(2*np*sizeof(double));
-                    polyn2 = polyn1+np;
-                    poly   = poly_in;
-                }
-                else{
-                    polyn1 = (double *)malloc(3*np*sizeof(double));
-                    polyn2 = polyn1+np;
-                    poly   = polyn2+np;
-                }
-
-                for(i = 0; i < np; ++i){
-                    polyn2[i] = one;
-                    polyn1[i] = 0.5*(alpha - beta + (alpha + beta + two)*z[i]);
-                }
-
-                for(k = 2; k <= n; ++k){
-                    a1 =  two*k*(k + apb)*(two*k + apb - two);
-                    a2 = (two*k + apb - one)*(alpha*alpha - beta*beta);
-                    a3 = (two*k + apb - two)*(two*k + apb - one)*(two*k + apb);
-                    a4 =  two*(k + alpha - one)*(k + beta - one)*(two*k + apb);
-
-                    a2 /= a1;
-                    a3 /= a1;
-                    a4 /= a1;
-
-                    for(i = 0; i < np; ++i){
-                        poly  [i] = (a2 + a3*z[i])*polyn1[i] - a4*polyn2[i];
-                        polyn2[i] = polyn1[i];
-                        polyn1[i] = poly  [i];
-                    }
-                }
-
-                if(polyd){
-                    a1 = n*(alpha - beta);
-                    a2 = n*(two*n + alpha + beta);
-                    a3 = two*(n + alpha)*(n + beta);
-                    a4 = (two*n + alpha + beta);
-                    a1 /= a4;  a2 /= a4;   a3 /= a4;
-
-                    // note polyn2 points to polyn1 at end of poly iterations
-                    for(i = 0; i < np; ++i){
-                        polyd[i]  = (a1- a2*z[i])*poly[i] + a3*polyn2[i];
-                        polyd[i] /= (one - z[i]*z[i]);
-                    }
-                }
-
-                free(polyn1);
-            }
-
-            return;
-    }
-
-
-    /**
-    \brief Calculate the  derivative of Jacobi polynomials
-
-    \li Generates a vector \a poly of values of the derivative of the
-    \a n th order Jacobi polynomial \f$ P^(\alpha,\beta)_n(z)\f$ at the
-    \a np points \a z.
-
-    \li To do this we have used the relation
-    \n
-    \f$ \frac{d}{dz} P^{\alpha,\beta}_n(z)
-    = \frac{1}{2} (\alpha + \beta + n + 1)  P^{\alpha,\beta}_n(z) \f$
-
-    \li This formulation is valid for \f$ -1 \leq z \leq 1 \f$
-
-    */
-
-    void jacobd(const int np, const double *z, double *polyd, const int n,
-        const double alpha, const double beta)
-    {
-        int i;
-        double one = 1.0;
-        if(n == 0)
-            for(i = 0; i < np; ++i) polyd[i] = 0.0;
-        else{
-            //jacobf(np,z,polyd,n-1,alpha+one,beta+one);
-            jacobfd(np,z,polyd,NULL,n-1,alpha+one,beta+one);
-            for(i = 0; i < np; ++i) polyd[i] *= 0.5*(alpha + beta + (double)n + one);
-        }
-        return;
-    }
-
 
 	/// The following function is used to circumvent/reduce "Subtractive Cancellation"
 	/// The expression 1/dz  is replaced by optinvsub(.,.)
@@ -1155,6 +998,160 @@ namespace Polylib {
         return;
     }
 
+    /**
+    \brief Routine to calculate Jacobi polynomials, \f$
+    P^{\alpha,\beta}_n(z) \f$, and their first derivative, \f$
+    \frac{d}{dz} P^{\alpha,\beta}_n(z) \f$.
+
+    \li This function returns the vectors \a poly_in and \a poly_d
+    containing the value of the \f$ n^th \f$ order Jacobi polynomial
+    \f$ P^{\alpha,\beta}_n(z) \alpha > -1, \beta > -1 \f$ and its
+    derivative at the \a np points in \a z[i]
+
+    - If \a poly_in = NULL then only calculate derivatice
+
+    - If \a polyd   = NULL then only calculate polynomial
+
+    - To calculate the polynomial this routine uses the recursion
+    relationship (see appendix A ref [4]) :
+    \f$ \begin{array}{rcl}
+    P^{\alpha,\beta}_0(z) &=& 1 \\
+    P^{\alpha,\beta}_1(z) &=& \frac{1}{2} [ \alpha-\beta+(\alpha+\beta+2)z] \\
+    a^1_n P^{\alpha,\beta}_{n+1}(z) &=& (a^2_n + a^3_n z)
+    P^{\alpha,\beta}_n(z) - a^4_n P^{\alpha,\beta}_{n-1}(z) \\
+    a^1_n &=& 2(n+1)(n+\alpha + \beta + 1)(2n + \alpha + \beta) \\
+    a^2_n &=& (2n + \alpha + \beta + 1)(\alpha^2 - \beta^2)  \\
+    a^3_n &=& (2n + \alpha + \beta)(2n + \alpha + \beta + 1)
+    (2n + \alpha + \beta + 2)  \\
+    a^4_n &=& 2(n+\alpha)(n+\beta)(2n + \alpha + \beta + 2)
+    \end{array} \f$
+
+    - To calculate the derivative of the polynomial this routine uses
+    the relationship (see appendix A ref [4]) :
+    \f$ \begin{array}{rcl}
+    b^1_n(z)\frac{d}{dz} P^{\alpha,\beta}_n(z)&=&b^2_n(z)P^{\alpha,\beta}_n(z)
+    + b^3_n(z) P^{\alpha,\beta}_{n-1}(z) \hspace{2.2cm} \\
+    b^1_n(z) &=& (2n+\alpha + \beta)(1-z^2) \\
+    b^2_n(z) &=& n[\alpha - \beta - (2n+\alpha + \beta)z]\\
+    b^3_n(z) &=& 2(n+\alpha)(n+\beta)
+    \end{array} \f$
+
+    - Note the derivative from this routine is only valid for -1 < \a z < 1.
+    */
+    void jacobfd(const int np, const double *z, double *poly_in, double *polyd,
+        const int n, const double alpha, const double beta){
+            int i;
+            double  zero = 0.0, one = 1.0, two = 2.0;
+
+            if(!np)
+                return;
+
+            if(n == 0){
+                if(poly_in)
+                    for(i = 0; i < np; ++i)
+                        poly_in[i] = one;
+                if(polyd)
+                    for(i = 0; i < np; ++i)
+                        polyd[i] = zero;
+            }
+            else if (n == 1){
+                if(poly_in)
+                    for(i = 0; i < np; ++i)
+                        poly_in[i] = 0.5*(alpha - beta + (alpha + beta + two)*z[i]);
+                if(polyd)
+                    for(i = 0; i < np; ++i)
+                        polyd[i] = 0.5*(alpha + beta + two);
+            }
+            else{
+                int k;
+                double   a1,a2,a3,a4;
+                double   two = 2.0, apb = alpha + beta;
+                double   *poly, *polyn1,*polyn2;
+
+                if(poly_in){ // switch for case of no poynomial function return
+                    polyn1 = (double *)malloc(2*np*sizeof(double));
+                    polyn2 = polyn1+np;
+                    poly   = poly_in;
+                }
+                else{
+                    polyn1 = (double *)malloc(3*np*sizeof(double));
+                    polyn2 = polyn1+np;
+                    poly   = polyn2+np;
+                }
+
+                for(i = 0; i < np; ++i){
+                    polyn2[i] = one;
+                    polyn1[i] = 0.5*(alpha - beta + (alpha + beta + two)*z[i]);
+                }
+
+                for(k = 2; k <= n; ++k){
+                    a1 =  two*k*(k + apb)*(two*k + apb - two);
+                    a2 = (two*k + apb - one)*(alpha*alpha - beta*beta);
+                    a3 = (two*k + apb - two)*(two*k + apb - one)*(two*k + apb);
+                    a4 =  two*(k + alpha - one)*(k + beta - one)*(two*k + apb);
+
+                    a2 /= a1;
+                    a3 /= a1;
+                    a4 /= a1;
+
+                    for(i = 0; i < np; ++i){
+                        poly  [i] = (a2 + a3*z[i])*polyn1[i] - a4*polyn2[i];
+                        polyn2[i] = polyn1[i];
+                        polyn1[i] = poly  [i];
+                    }
+                }
+
+                if(polyd){
+                    a1 = n*(alpha - beta);
+                    a2 = n*(two*n + alpha + beta);
+                    a3 = two*(n + alpha)*(n + beta);
+                    a4 = (two*n + alpha + beta);
+                    a1 /= a4;  a2 /= a4;   a3 /= a4;
+
+                    // note polyn2 points to polyn1 at end of poly iterations
+                    for(i = 0; i < np; ++i){
+                        polyd[i]  = (a1- a2*z[i])*poly[i] + a3*polyn2[i];
+                        polyd[i] /= (one - z[i]*z[i]);
+                    }
+                }
+
+                free(polyn1);
+            }
+
+            return;
+    }
+
+
+    /**
+    \brief Calculate the  derivative of Jacobi polynomials
+
+    \li Generates a vector \a poly of values of the derivative of the
+    \a n th order Jacobi polynomial \f$ P^(\alpha,\beta)_n(z)\f$ at the
+    \a np points \a z.
+
+    \li To do this we have used the relation
+    \n
+    \f$ \frac{d}{dz} P^{\alpha,\beta}_n(z)
+    = \frac{1}{2} (\alpha + \beta + n + 1)  P^{\alpha,\beta}_n(z) \f$
+
+    \li This formulation is valid for \f$ -1 \leq z \leq 1 \f$
+
+    */
+
+    void jacobd(const int np, const double *z, double *polyd, const int n,
+        const double alpha, const double beta)
+    {
+        int i;
+        double one = 1.0;
+        if(n == 0)
+            for(i = 0; i < np; ++i) polyd[i] = 0.0;
+        else{
+            //jacobf(np,z,polyd,n-1,alpha+one,beta+one);
+            jacobfd(np,z,polyd,NULL,n-1,alpha+one,beta+one);
+            for(i = 0; i < np; ++i) polyd[i] *= 0.5*(alpha + beta + (double)n + one);
+        }
+        return;
+    }
 
 
     /**
@@ -1658,12 +1655,12 @@ namespace Polylib {
     */
 
 
-    std::complex<double> ImagBesselComp(int n,std::complex<double> y)
+    std::complex<Nektar::NekDouble> ImagBesselComp(int n,std::complex<Nektar::NekDouble> y)
     {
-    	std::complex<double> z (1.0,0.0);
-    	std::complex<double> zbes (1.0,0.0);
-    	std::complex<double> zarg;
-      double tol = 1e-15;
+    	std::complex<Nektar::NekDouble> z (1.0,0.0);
+    	std::complex<Nektar::NekDouble> zbes (1.0,0.0);
+    	std::complex<Nektar::NekDouble> zarg;
+        Nektar::NekDouble tol = 1e-15;
     	int maxit = 10000;
     	int i = 1;
 

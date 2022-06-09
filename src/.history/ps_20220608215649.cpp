@@ -24,7 +24,7 @@ torch::Tensor pyzwgj(int np, double alpha, double beta) {
 
 torch::Tensor pyzwgrjm(int np, double alpha, double beta){
     std::vector<double> vzs(np), vws(np);
-    Polylib::zwgrjm(&vzs[0], &vws[0], np , alpha , beta);
+    zwgrjm(&vzs[0], &vws[0], np , alpha , beta);
     auto opts = torch::TensorOptions().dtype(torch::kFloat64);
     torch::Tensor zs = torch::from_blob(&vzs[0], {np}, opts).to(torch::kFloat64); //This assumes row ordering
     torch::Tensor ws = torch::from_blob(&vws[0], {np}, opts).to(torch::kFloat64); //This assumes row ordering
@@ -33,9 +33,9 @@ torch::Tensor pyzwgrjm(int np, double alpha, double beta){
     return torch::clone(zpw);
 }
 
-torch::Tensor pyzwgrjp(int np, double alpha, double beta){
+torch::Tensor pyzwgrjp(double *z, double *w, int np, double alpha, double beta){
     std::vector<double> vzs(np), vws(np);
-    Polylib::zwgrjp(&vzs[0], &vws[0], np , alpha , beta);
+    zwgrjp(&vzs[0], &vws[0], np , alpha , beta);
     auto opts = torch::TensorOptions().dtype(torch::kFloat64);
     torch::Tensor zs = torch::from_blob(&vzs[0], {np}, opts).to(torch::kFloat64); //This assumes row ordering
     torch::Tensor ws = torch::from_blob(&vws[0], {np}, opts).to(torch::kFloat64); //This assumes row ordering
@@ -45,9 +45,9 @@ torch::Tensor pyzwgrjp(int np, double alpha, double beta){
 }
 
 
-torch::Tensor pyzwglj(int np, double alpha, double beta){
+torch::Tensor pyzwglj(double *z, double *w, int np, double alpha, double beta){
     std::vector<double> vzs(np), vws(np);
-    Polylib::zwglj(&vzs[0], &vws[0], np , alpha , beta);
+    zwglj(&vzs[0], &vws[0], np , alpha , beta);
     auto opts = torch::TensorOptions().dtype(torch::kFloat64);
     torch::Tensor zs = torch::from_blob(&vzs[0], {np}, opts).to(torch::kFloat64); //This assumes row ordering
     torch::Tensor ws = torch::from_blob(&vws[0], {np}, opts).to(torch::kFloat64); //This assumes row ordering
@@ -57,10 +57,8 @@ torch::Tensor pyzwglj(int np, double alpha, double beta){
 }
 
 torch::Tensor pyDgj(int np,double alpha, double beta){
-  std::vector<double> vzs(np), vws(np);
-  Polylib::zwgj(&vzs[0], &vws[0], np , alpha , beta);  
-  std::vector<double> D(np*np, 0.0);
-  Polylib::Dgj(&D[0], &vzs[0], np, alpha, beta);
+  std::vector<double> D(np*np), Dt(np*np), z(np);
+  Dgj(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
   DM = DM.contiguous();
@@ -68,10 +66,8 @@ torch::Tensor pyDgj(int np,double alpha, double beta){
 }
 
 torch::Tensor pyDgrjm(int np, double alpha, double beta){
-  std::vector<double> vzs(np), vws(np);
-  Polylib::zwgrjm(&vzs[0], &vws[0], np , alpha , beta);  
-  std::vector<double> D(np*np, 0.0);
-  Polylib::Dgrjm(&D[0], &vzs[0], np,alpha, beta);
+  std::vector<double> D(np*np), Dt(np*np), z(np);
+  Dgrjm(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
   DM = DM.contiguous();
@@ -79,11 +75,8 @@ torch::Tensor pyDgrjm(int np, double alpha, double beta){
 }
 
 torch::Tensor pyDgrjp(int np, double alpha, double beta){
-  std::vector<double> vzs(np), vws(np);
-  Polylib::zwgrjp(&vzs[0], &vws[0], np , alpha , beta);  
-  
-  std::vector<double> D(np*np, 0.0);
-  Polylib::Dgrjp(&D[0], &vzs[0], np,alpha, beta);
+  std::vector<double> D(np*np), Dt(np*np), z(np);
+  Dgrjp(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
   DM = DM.contiguous();
@@ -91,10 +84,8 @@ torch::Tensor pyDgrjp(int np, double alpha, double beta){
 }
 
 torch::Tensor pyDglj(int np, double alpha, double beta){
-  std::vector<double> vzs(np), vws(np);
-  Polylib::zwglj(&vzs[0], &vws[0], np , alpha , beta);  
-  std::vector<double> D(np*np, 0.0);
-  Polylib::Dglj(&D[0], &vzs[0], np,alpha, beta);
+  std::vector<double> D(np*np), Dt(np*np), z(np);
+  Dglj(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
   DM = DM.contiguous();

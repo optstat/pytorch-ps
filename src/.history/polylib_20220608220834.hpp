@@ -1658,12 +1658,12 @@ namespace Polylib {
     */
 
 
-    std::complex<double> ImagBesselComp(int n,std::complex<double> y)
+    std::complex<Nektar::NekDouble> ImagBesselComp(int n,std::complex<Nektar::NekDouble> y)
     {
-    	std::complex<double> z (1.0,0.0);
-    	std::complex<double> zbes (1.0,0.0);
-    	std::complex<double> zarg;
-      double tol = 1e-15;
+    	std::complex<Nektar::NekDouble> z (1.0,0.0);
+    	std::complex<Nektar::NekDouble> zbes (1.0,0.0);
+    	std::complex<Nektar::NekDouble> zarg;
+        Nektar::NekDouble tol = 1e-15;
     	int maxit = 10000;
     	int i = 1;
 
