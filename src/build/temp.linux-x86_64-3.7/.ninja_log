@@ -1,6 +1,0 @@
-# ninja log v5
-0	17050	1654742154998757129	/home/panos/Applications/research/pytorch-ps/src/build/temp.linux-x86_64-3.7/ps.o	344b5a0c1f4dbbd5
-15	16889	1654742588250179242	/home/panos/Applications/research/pytorch-ps/src/build/temp.linux-x86_64-3.7/ps.o	344b5a0c1f4dbbd5
-15	16795	1654742721089987206	/home/panos/Applications/research/pytorch-ps/src/build/temp.linux-x86_64-3.7/ps.o	344b5a0c1f4dbbd5
-14	16933	1654743260437200341	/home/panos/Applications/research/pytorch-ps/src/build/temp.linux-x86_64-3.7/ps.o	344b5a0c1f4dbbd5
-15	17194	1654743399108997367	/home/panos/Applications/research/pytorch-ps/src/build/temp.linux-x86_64-3.7/ps.o	344b5a0c1f4dbbd5

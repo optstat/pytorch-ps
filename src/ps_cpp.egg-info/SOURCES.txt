@@ -1,6 +1,0 @@
-ps.cpp
-setup.py
-ps_cpp.egg-info/PKG-INFO
-ps_cpp.egg-info/SOURCES.txt
-ps_cpp.egg-info/dependency_links.txt
-ps_cpp.egg-info/top_level.txt
