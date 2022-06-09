@@ -60,36 +60,36 @@ torch::Tensor pyDgj(int np,double alpha, double beta){
   std::vector<double> D(np*np), Dt(np*np), z(np);
   Dgj(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-  torch::Tensor Dt = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  Dt = Dt.contiguous();
-  return torch::clone(Dt);
+  torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
+  DM = DM.contiguous();
+  return torch::clone(DM);
 }
 
 torch::Tensor pyDgrjm(int np, double alpha, double beta){
   std::vector<double> D(np*np), Dt(np*np), z(np);
   Dgrjm(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-  torch::Tensor Dt = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  Dt = Dt.contiguous();
-  return torch::clone(Dt);
+  torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
+  DM = DM.contiguous();
+  return torch::clone(DM);
 }
 
 torch::Tensor pyDgrjp(int np, double alpha, double beta){
   std::vector<double> D(np*np), Dt(np*np), z(np);
   Dgrjp(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-  torch::Tensor Dt = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  Dt = Dt.contiguous();
-  return torch::clone(Dt);
+  torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
+  DM = DM.contiguous();
+  return torch::clone(DM);
 }
 
 torch::Tensor pyDglj(int np, double alpha, double beta){
   std::vector<double> D(np*np), Dt(np*np), z(np);
   Dglj(D.data(), Dt.data(), z.data(), np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-  torch::Tensor Dt = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  Dt = Dt.contiguous();
-  return torch::clone(Dt);
+  torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
+  DM = DM.contiguous();
+  return torch::clone(DM);
 }
 
 
