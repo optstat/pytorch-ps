@@ -83,16 +83,6 @@ torch::Tensor pyDgrjp(int np, double alpha, double beta){
   return torch::clone(Dt);
 }
 
-torch::Tensor pyDglj(int np, double alpha, double beta){
-  std::vector<double> D(np*np), Dt(np*np), z(np);
-  Dglj(D.data(), Dt.data(), z.data(), np,alpha, beta);
-  auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-  torch::Tensor Dt = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  Dt = Dt.contiguous();
-  return torch::clone(Dt);
-}
-
-
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("pyzwgj", &pyzwgj, "pyzwgj");
   m.def("pyzwgrjm", &pyzwgrjm, "pyzwgrjm");
@@ -101,5 +91,4 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("pyDgj", &pyDgj, "pyDgj");
   m.def("pyDgrjm", &pyDgrjm, "pyDgrjm");
   m.def("pyDgrjp", &pyDgrjp, "pyDgrjp");
-  m.def("pyDglj", &pyDglj, "pyDglj");
 }
