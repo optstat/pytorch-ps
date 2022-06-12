@@ -62,9 +62,10 @@ torch::Tensor pyDgj(int np,double alpha, double beta){
   std::vector<double> D(np*np, 0.0);
   Polylib::Dgj(&D[0], &vzs[0], np, alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-  torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  DM = DM.contiguous();
-  return torch::clone(DM);
+  torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //The matrix is column ordered so we have to take the transpse
+  torch::Tensor DMt = torch::transpose(DM,0,1);
+  DMt = DMt.contiguous();
+  return torch::clone(DMt);
 }
 
 torch::Tensor pyDgrjm(int np, double alpha, double beta){
@@ -74,8 +75,10 @@ torch::Tensor pyDgrjm(int np, double alpha, double beta){
   Polylib::Dgrjm(&D[0], &vzs[0], np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  DM = DM.contiguous();
-  return torch::clone(DM);
+  torch::Tensor DMt = torch::transpose(DM,0,1);
+  DMt = DMt.contiguous();
+  return torch::clone(DMt);
+
 }
 
 torch::Tensor pyDgrjp(int np, double alpha, double beta){
@@ -86,8 +89,10 @@ torch::Tensor pyDgrjp(int np, double alpha, double beta){
   Polylib::Dgrjp(&D[0], &vzs[0], np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  DM = DM.contiguous();
-  return torch::clone(DM);
+  torch::Tensor DMt = torch::transpose(DM,0,1);
+  DMt = DMt.contiguous();
+  return torch::clone(DMt);
+
 }
 
 torch::Tensor pyDglj(int np, double alpha, double beta){
@@ -97,8 +102,10 @@ torch::Tensor pyDglj(int np, double alpha, double beta){
   Polylib::Dglj(&D[0], &vzs[0], np,alpha, beta);
   auto opts = torch::TensorOptions().dtype(torch::kFloat64);
   torch::Tensor DM = torch::from_blob(&D[0], {np,np}, opts).to(torch::kFloat64); //This assumes row ordering
-  DM = DM.contiguous();
-  return torch::clone(DM);
+  torch::Tensor DMt = torch::transpose(DM,0,1);
+  DMt = DMt.contiguous();
+  return torch::clone(DMt);
+
 }
 
 
