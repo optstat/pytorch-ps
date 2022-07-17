@@ -8,7 +8,9 @@ To build and install for the current user invoke '
 
 **python3 setup.py install --user**
 
-The following functions are implemented
+
+
+The following functions can be utilized after importing from module ps_cpp
 
 **pyzwgj(np, alpha, beta)** -Find the Gauss Jacobi Zero roots and Weights at np intervals given Jacobi polynomial parameters alpha and beta.  This will return a single tensor with the first dimension being the Zeroes and the second dimension containing the Weights.
 
